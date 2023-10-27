@@ -1,24 +1,34 @@
-let line1 = [];
-let line2 = [];
-let numPoints = 10;
+let randomPoints1 = [];
+let randomPoints2 = [];
+let numFlashPoints = 5;
+let numNormalPoints = 10;
 let spacing;
 let timer = 60;
 let timerInterval;
 let isTimeUp = false;
+let imgFlash;
+let imgNormal;
+
+function preload() {
+  imgFlash = loadImage('ducks/patoFlash.png');
+  imgNormal = loadImage('ducks/patoNormal.png');
+}
 
 function setup() {
-  createCanvas(400, 200);
-  spacing = width / (numPoints + 1);
+  createCanvas(700, 600);
+  spacing = width / (numNormalPoints + 1);
   
-  for (let i = 0; i < numPoints; i++) {
-    line1.push({
-      position: createVector(spacing * (i + 1), height / 3),
-      color: color(255, 0, 0) // Color rojo para la línea que va hacia la derecha
+  for (let i = 0; i < numFlashPoints; i++) {
+    randomPoints1.push({
+      position: createVector(random(0, width), random(0, height)),
+      img: imgFlash
     });
+  }
     
-    line2.push({
-      position: createVector(spacing * (i + 1), (2 * height) / 3),
-      color: color(0, 0, 255) // Color azul para la línea que va hacia la izquierda
+  for (let i = 0; i < numNormalPoints; i++) {
+    randomPoints2.push({
+      position: createVector(random(0, width), random(0, height)),
+      img: imgNormal
     });
   }
   
@@ -38,28 +48,29 @@ function draw() {
   }
 
   // Mueve los puntos de la primera línea hacia la derecha
-  for (let i = 0; i < numPoints; i++) {
-    line1[i].position.x += 2; // La línea que va a la derecha se mueve más rápido
-    if (line1[i].position.x > width) {
-      line1[i].position.x = 0;
+  for (let i = 0; i < numFlashPoints; i++) {
+    randomPoints1[i].position.x += 15; // La línea que va a la derecha se mueve más rápido
+    if (randomPoints1[i].position.x > width) {
+      randomPoints1[i].position.x = 0;
     }
   }
 
   // Mueve los puntos de la segunda línea hacia la izquierda
-  for (let i = 0; i < numPoints; i++) {
-    line2[i].position.x -= 1; // La línea que va hacia la izquierda se mueve más lento
-    if (line2[i].position.x < 0) {
-      line2[i].position.x = width;
+  for (let i = 0; i < numNormalPoints; i++) {
+    randomPoints2[i].position.x -= 2; // La línea que va hacia la izquierda se mueve más lento
+    if (randomPoints2[i].position.x < 0) {
+      randomPoints2[i].position.x = width;
     }
   }
 
   // Dibuja los puntos
-  for (let i = 0; i < numPoints; i++) {
-    fill(line1[i].color);
-    ellipse(line1[i].position.x, line1[i].position.y, 10, 10);
-    
-    fill(line2[i].color);
-    ellipse(line2[i].position.x, line2[i].position.y, 10, 10);
+
+  for (let i = 0; i < numFlashPoints; i++) {
+    image(imgFlash, randomPoints1[i].position.x, randomPoints1[i].position.y, 60, 60);
+  }
+
+  for (let i = 0; i < numNormalPoints; i++) {
+    image(imgNormal, randomPoints2[i].position.x, randomPoints2[i].position.y, 60, 60);
   }
 }
 
