@@ -47,23 +47,22 @@ function draw() {
     return;
   }
 
-  // Mueve los puntos de la primera línea hacia la derecha
   for (let i = 0; i < numFlashPoints; i++) {
-    randomPoints1[i].position.x += 15; // La línea que va a la derecha se mueve más rápido
+    randomPoints1[i].position.x += 15;
     if (randomPoints1[i].position.x > width) {
       randomPoints1[i].position.x = 0;
     }
   }
 
-  // Mueve los puntos de la segunda línea hacia la izquierda
+
   for (let i = 0; i < numNormalPoints; i++) {
-    randomPoints2[i].position.x -= 2; // La línea que va hacia la izquierda se mueve más lento
+    randomPoints2[i].position.x -= 2;
     if (randomPoints2[i].position.x < 0) {
       randomPoints2[i].position.x = width;
     }
   }
 
-  // Dibuja los puntos
+
 
   for (let i = 0; i < numFlashPoints; i++) {
     image(imgFlash, randomPoints1[i].position.x, randomPoints1[i].position.y, 60, 60);
