@@ -9,6 +9,7 @@ let isTimeUp = false;
 let imgFlash;
 let imgNormal;
 
+
 function preload() {
   imgFlash = loadImage('ducks/patoFlash.png');
   imgNormal = loadImage('ducks/patoNormal.png');
@@ -48,7 +49,7 @@ function draw() {
   }
 
   for (let i = 0; i < numFlashPoints; i++) {
-    randomPoints1[i].position.x += 15;
+    randomPoints1[i].position.x += 13;
     if (randomPoints1[i].position.x > width) {
       randomPoints1[i].position.x = 0;
     }
@@ -56,9 +57,9 @@ function draw() {
 
 
   for (let i = 0; i < numNormalPoints; i++) {
-    randomPoints2[i].position.x -= 2;
-    if (randomPoints2[i].position.x < 0) {
-      randomPoints2[i].position.x = width;
+    randomPoints2[i].position.x += 6;
+    if (randomPoints2[i].position.x > width) {
+      randomPoints2[i].position.x = 0;
     }
   }
 
