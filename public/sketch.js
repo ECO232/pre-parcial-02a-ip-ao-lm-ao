@@ -19,9 +19,9 @@ function updateTimerDisplay() {
 }
 
 function preload() {
-  imgFlash = loadImage('ducks/patoFlash.png');
-  imgNormal = loadImage('ducks/patoNormal.png');
-  aim = loadImage('ducks/aim.png');
+  imgFlash = loadImage('../ducks/patoFlash.png');
+  imgNormal = loadImage('../ducks/patoNormal.png');
+  aim = loadImage('../ducks/aim.png');
 }
 
 function setup() {
