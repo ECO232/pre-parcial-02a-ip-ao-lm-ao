@@ -10,6 +10,7 @@ let isTimeUp = false;
 let imgFlash;
 let imgNormal;
 let aim;
+let serial;
 
 function updateTimerDisplay() {
   const timerDisplay = document.getElementById("timerDisplay");
@@ -45,6 +46,11 @@ function setup() {
   }
 
   timerInterval = setInterval(decrementTimer, 1000);
+
+  // Comunicación con serie
+  serial=new p5.SerialPort();
+  serial.open('COM6');
+  serial.on('data',processData)
 }
 
 function draw() {
@@ -86,6 +92,8 @@ function draw() {
         score += 3;
         randomPoints1[i].position.x = -60;
         randomPoints1[i].position.y = random(0, height);
+
+        serial.write('A');
       }
     }
   }
@@ -98,6 +106,8 @@ function draw() {
         score += 1;
         randomPoints2[i].position.x = -60;
         randomPoints2[i].position.y = random(0, height);
+
+        serial.write('A');
       }
     }
   }
@@ -109,5 +119,13 @@ function decrementTimer() {
   timer--;
   if (timer <= 0) {
     isTimeUp = true;
+  }
+}
+function processData() {
+  // Función para manejar los datos recibidos desde el Arduino
+  let data = serial.readStringUntil('\n');
+  if (data) {
+    console.log("Dato recibido desde Arduino:", data);
+    // Realiza acciones en base a los datos recibidos desde Arduino
   }
 }
