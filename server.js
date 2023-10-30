@@ -6,7 +6,9 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-// Configura el servidor HTTP
+const SerialPort = require('serialport'); // Agrega la biblioteca SerialPort
+const port = new SerialPort('COM3', { baudRate: 9600 }); // Reemplaza 'COM3' con el nombre de tu puerto Arduino
+
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
@@ -14,18 +16,11 @@ app.get('/', (req, res) => {
 io.on('connection', (socket) => {
   console.log('Cliente conectado');
 
-  socket.on('mousemove', (data) => {
-    console.log('Datos del movimiento del ratón recibidos:', data);
+  socket.on('shoot', (data) => {
+    console.log('Comando de disparo recibido:', data);
 
-    // Envia los datos del movimiento del ratón al Arduino a través de la comunicación serie
-    // Puedes utilizar un módulo como 'johnny-five' para comunicarte con el Arduino.
-  });
-
-  socket.on('shoot', () => {
-    console.log('Comando de disparo recibido');
-
-    // Envía un comando al Arduino para simular el disparo
-    // Puedes usar la comunicación serie, como se describió en respuestas anteriores.
+    // Envía el comando al Arduino a través de la comunicación serie
+    port.write(data);
   });
 
   socket.on('disconnect', () => {
