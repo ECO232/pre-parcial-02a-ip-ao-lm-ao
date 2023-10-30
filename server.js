@@ -1,33 +1,29 @@
-const express = require('express');
-const http = require('http');
-const { Server } = require('socket.io');
-
-const app = express();
-const server = http.createServer(app);
-const io = new Server(server);
-
-const SerialPort = require('serialport'); // Agrega la biblioteca SerialPort
-const port = new SerialPort('COM3', { baudRate: 9600 }); // Reemplaza 'COM3' con el nombre de tu puerto Arduino
-
-app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
+import { SerialPort } from 'serialport'
+import { ReadlineParser } from 'serialport'
+import express from 'express'
+//const express = require('express')
+const app = express()
+const protocolConfiguration = {
+    path: 'COM3',
+    baudRate: 9600
+}
+const port = new SerialPort(protocolConfiguration);
+const parser = port.pipe(new ReadlineParser());
+app.get('/potenciometro', (req, res)=>{
+    port.write('potenciometro\n', function(err) {
+        if (err) {
+            return console.log('Error on write: ', err.message);
+        }
+        console.log('message written');
+    });
+    res.send(parser.read()); /////// 
+})
+port.on('error', function(err) {
+    console.log('Error: ', err.message);
+})
+parser.on('data', (data) => {    
+    console.log(data);
 });
-
-io.on('connection', (socket) => {
-  console.log('Cliente conectado');
-
-  socket.on('shoot', (data) => {
-    console.log('Comando de disparo recibido:', data);
-
-    // Envía el comando al Arduino a través de la comunicación serie
-    port.write(data);
-  });
-
-  socket.on('disconnect', () => {
-    console.log('Cliente desconectado');
-  });
-});
-
-server.listen(3000, () => {
-  console.log('Servidor escuchando en el puerto 3000');
+app.listen(3000,()=>{
+    console.log("Node Server Starts at 3000");
 });
