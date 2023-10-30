@@ -10,7 +10,6 @@ let isTimeUp = false;
 let imgFlash;
 let imgNormal;
 let aim;
-const socket = io.connect('http://localhost:3000'); // Conecta con el servidor Socket.io
 
 function updateTimerDisplay() {
   const timerDisplay = document.getElementById("timerDisplay");
@@ -87,8 +86,6 @@ function draw() {
         score += 3;
         randomPoints1[i].position.x = -60;
         randomPoints1[i].position.y = random(0, height);
-        // Notifica al servidor que un pato flash fue golpeado
-        socket.emit('flashDuckHit', i);
       }
     }
   }
@@ -101,8 +98,6 @@ function draw() {
         score += 1;
         randomPoints2[i].position.x = -60;
         randomPoints2[i].position.y = random(0, height);
-        // Notifica al servidor que un pato normal fue golpeado
-        socket.emit('normalDuckHit', i);
       }
     }
   }

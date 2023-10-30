@@ -1,7 +1,27 @@
 {
   "dependencies": {
     "express": "^4.18.2",
+    "http": "^0.0.1-security",
     "serialport": "^12.0.0",
     "socket.io": "^4.7.2"
-  }
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "name": "duckhunt",
+  "version": "1.0.0",
+  "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ECO232/pre-parcial-02a-ip-ao-lm-ao.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ECO232/pre-parcial-02a-ip-ao-lm-ao/issues"
+  },
+  "homepage": "https://github.com/ECO232/pre-parcial-02a-ip-ao-lm-ao#readme",
+  "devDependencies": {},
+  "description": ""
 }
