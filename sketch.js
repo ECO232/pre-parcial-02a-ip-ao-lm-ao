@@ -12,6 +12,9 @@ let imgNormal;
 let aim;
 let serial;
 
+let mouseXArduino = 0;
+let mouseYArduino = 0;
+
 function updateTimerDisplay() {
   const timerDisplay = document.getElementById("timerDisplay");
   const minutes = Math.floor(timer / 60);
@@ -86,33 +89,24 @@ function draw() {
 
   for (let i = 0; i < numFlashPoints; i++) {
     image(imgFlash, randomPoints1[i].position.x, randomPoints1[i].position.y, 60, 60);
-    if (mouseIsPressed) {
-      const d = dist(mouseX, mouseY, randomPoints1[i].position.x + 30, randomPoints1[i].position.y + 30);
-      if (d < 30) {
-        score += 3;
-        randomPoints1[i].position.x = -60;
-        randomPoints1[i].position.y = random(0, height);
-
-        serial.write('A');
+    if (dist(mouseXArduino, mouseYArduino, randomPoints1[i].position.x + 30, randomPoints1[i].position.y + 30) < 30) {
+      score += 3;
+      randomPoints1[i].position.x = -60;
+      randomPoints1[i].position.y = random(0, height);
       }
     }
-  }
+
 
   for (let i = 0; i < numNormalPoints; i++) {
     image(imgNormal, randomPoints2[i].position.x, randomPoints2[i].position.y, 60, 60);
-    if (mouseIsPressed) {
-      const d = dist(mouseX, mouseY, randomPoints2[i].position.x + 30, randomPoints2[i].position.y + 30);
-      if (d < 30) {
-        score += 1;
-        randomPoints2[i].position.x = -60;
-        randomPoints2[i].position.y = random(0, height);
-
-        serial.write('A');
+    if (dist(mouseXArduino, mouseYArduino, randomPoints2[i].position.x + 30, randomPoints2[i].position.y + 30) < 30) {
+      score += 1;
+      randomPoints2[i].position.x = -60;
+      randomPoints2[i].position.y = random(0, height);
       }
     }
-  }
 
-  image(aim, mouseX - 15, mouseY - 15, 30, 30);
+    image(aim, mouseXArduino - 15, mouseYArduino - 15, 30, 30);
 }
 
 function decrementTimer() {
@@ -121,11 +115,24 @@ function decrementTimer() {
     isTimeUp = true;
   }
 }
+
 function processData() {
-  // Función para manejar los datos recibidos desde el Arduino
   let data = serial.readStringUntil('\n');
   if (data) {
-    console.log("Dato recibido desde Arduino:", data);
-    // Realiza acciones en base a los datos recibidos desde Arduino
+    const values = data.split(',');
+    if (values.length === 3) {
+      const potValue1 = int(values[0].split(' ')[1]);
+      const potValue2 = int(values[1].split(' ')[1]);
+      const buttonState = int(values[2].split(' ')[1]);
+      
+      mouseXArduino = map(potValue1, 0, 1023, 0, width);
+      mouseYArduino = map(potValue2, 0, 1023, 0, height);
+      
+      // Realiza acciones en base al estado del botón (disparar)
+      if (buttonState == 1) {
+        // Realiza acciones de disparo (puedes ajustar según tus necesidades)
+        // Por ejemplo, podrías enviar un comando al JavaScript para simular el disparo
+      }
+    }
   }
 }
