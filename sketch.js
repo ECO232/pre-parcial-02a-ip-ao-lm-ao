@@ -65,16 +65,16 @@ function draw() {
   for (let i = 0; i < numFlashPoints; i++) {
     randomPoints1[i].position.x += 13;
     if (randomPoints1[i].position.x > width) {
-      randomPoints1[i].position.x = -60; // Mueve el objeto fuera de la pantalla
-      randomPoints1[i].position.y = random(0, height); // Ubicación aleatoria en el eje Y
+      randomPoints1[i].position.x = -60;
+      randomPoints1[i].position.y = random(0, height);
     }
   }
 
   for (let i = 0; i < numNormalPoints; i++) {
     randomPoints2[i].position.x += 6;
     if (randomPoints2[i].position.x > width) {
-      randomPoints2[i].position.x = -60; // Mueve el objeto fuera de la pantalla
-      randomPoints2[i].position.y = random(0, height); // Ubicación aleatoria en el eje Y
+      randomPoints2[i].position.x = -60;
+      randomPoints2[i].position.y = random(0, height);
     }
   }
 
@@ -83,7 +83,7 @@ function draw() {
     if (mouseIsPressed) {
       const d = dist(mouseX, mouseY, randomPoints1[i].position.x + 30, randomPoints1[i].position.y + 30);
       if (d < 30) {
-        score += 1;
+        score += 3;
         randomPoints1[i].position.x = -60;
         randomPoints1[i].position.y = random(0, height);
       }
