@@ -3,12 +3,19 @@ let randomPoints2 = [];
 let numFlashPoints = 5;
 let numNormalPoints = 10;
 let spacing;
-let timer = 60;
+let timer = 30;
+let score = 0; // Agregamos una variable para llevar el puntaje
 let timerInterval;
 let isTimeUp = false;
 let imgFlash;
 let imgNormal;
 
+function updateTimerDisplay() {
+  const timerDisplay = document.getElementById("timerDisplay");
+  const minutes = Math.floor(timer / 60);
+  const seconds = timer % 60;
+  timerDisplay.innerText = `Timer: ${minutes}:${seconds < 10 ? '0' : ''}${seconds} seconds - Score: ${score}`;
+}
 
 function preload() {
   imgFlash = loadImage('ducks/patoFlash.png');
@@ -22,14 +29,16 @@ function setup() {
   for (let i = 0; i < numFlashPoints; i++) {
     randomPoints1.push({
       position: createVector(random(0, width), random(0, height)),
-      img: imgFlash
+      img: imgFlash,
+      isFlash: true
     });
   }
     
   for (let i = 0; i < numNormalPoints; i++) {
     randomPoints2.push({
       position: createVector(random(0, width), random(0, height)),
-      img: imgNormal
+      img: imgNormal,
+      isFlash: false
     });
   }
   
@@ -44,9 +53,11 @@ function draw() {
     clearInterval(timerInterval);
     textSize(32);
     fill(0);
-    text("¡Time's up!", width / 4, height / 2);
+    text("¡Time's up! - Final Score: " + score, width / 2.8, height / 2);
     return;
   }
+  
+  updateTimerDisplay();
 
   for (let i = 0; i < numFlashPoints; i++) {
     randomPoints1[i].position.x += 13;
@@ -55,7 +66,6 @@ function draw() {
     }
   }
 
-
   for (let i = 0; i < numNormalPoints; i++) {
     randomPoints2[i].position.x += 6;
     if (randomPoints2[i].position.x > width) {
@@ -63,15 +73,28 @@ function draw() {
     }
   }
 
-
-
   for (let i = 0; i < numFlashPoints; i++) {
     image(imgFlash, randomPoints1[i].position.x, randomPoints1[i].position.y, 60, 60);
+    if (mouseIsPressed) {
+      const d = dist(mouseX, mouseY, randomPoints1[i].position.x + 30, randomPoints1[i].position.y + 30);
+      if (d < 30) {
+        score += 3;
+        randomPoints1[i].position.x = -100;
+      }
+    }
   }
 
   for (let i = 0; i < numNormalPoints; i++) {
     image(imgNormal, randomPoints2[i].position.x, randomPoints2[i].position.y, 60, 60);
+    if (mouseIsPressed) {
+      const d = dist(mouseX, mouseY, randomPoints2[i].position.x + 30, randomPoints2[i].position.y + 30);
+      if (d < 30) {
+        score += 1;
+        randomPoints2[i].position.x = -100;
+      }
+    }
   }
+
 }
 
 function decrementTimer() {
