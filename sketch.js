@@ -121,17 +121,16 @@ function processData() {
   if (data) {
     const values = data.split(',');
     if (values.length === 3) {
-      const potValue1 = int(values[0].split(' ')[1]);
-      const potValue2 = int(values[1].split(' ')[1]);
-      const buttonState = int(values[2].split(' ')[1]);
-      
+      const potValue1 = int(values[0].split('A1')[1]);
+      const potValue2 = int(values[1].split('A3')[1]);
+      const buttonState = int(values[2].split('3')[1]);
+
       mouseXArduino = map(potValue1, 0, 1023, 0, width);
       mouseYArduino = map(potValue2, 0, 1023, 0, height);
-      
+
       // Realiza acciones en base al estado del botón (disparar)
       if (buttonState == 1) {
-        // Realiza acciones de disparo (puedes ajustar según tus necesidades)
-        // Por ejemplo, podrías enviar un comando al JavaScript para simular el disparo
+
       }
     }
   }
