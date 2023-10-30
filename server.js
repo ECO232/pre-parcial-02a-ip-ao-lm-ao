@@ -1,29 +1,27 @@
-import { SerialPort } from 'serialport'
-import { ReadlineParser } from 'serialport'
-import express from 'express'
-//const express = require('express')
-const app = express()
-const protocolConfiguration = {
-    path: 'COM3',
-    baudRate: 9600
-}
-const port = new SerialPort(protocolConfiguration);
-const parser = port.pipe(new ReadlineParser());
-app.get('/potenciometro', (req, res)=>{
-    port.write('potenciometro\n', function(err) {
-        if (err) {
-            return console.log('Error on write: ', err.message);
-        }
-        console.log('message written');
-    });
-    res.send(parser.read()); /////// 
-})
-port.on('error', function(err) {
-    console.log('Error: ', err.message);
-})
-parser.on('data', (data) => {    
-    console.log(data);
+const express = require('express');
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
+const SerialPort = require('serialport');
+
+// Configurar el puerto serie
+const port = new SerialPort('COM3', { baudRate: 9600 }); // Reemplaza 'COM3' por el puerto del Arduino
+
+// Resto de la configuración del servidor Express aquí...
+
+io.on('connection', (socket) => {
+  console.log('Cliente conectado');
+
+  // Maneja los eventos del socket aquí
+  socket.on('flashDuckHit', (index) => {
+    console.log(`Se golpeó un pato flash en el índice ${index}`);
+
+    // Envía un comando al Arduino a través del puerto serie
+    port.write(`F${index}\n`); // Ejemplo: envía 'F' seguido del índice y un salto de línea
+  });
 });
-app.listen(3000,()=>{
-    console.log("Node Server Starts at 3000");
+
+// Resto de la configuración y enrutamiento de tu servidor Express aquí...
+
+http.listen(3000, () => {
+  console.log('Servidor escuchando en el puerto 3000');
 });

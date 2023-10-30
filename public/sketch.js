@@ -1,10 +1,3 @@
-const socket = io();
-
-// Envía un comando de disparo al servidor
-function sendShootCommand() {
-  socket.emit('shoot', 'S'); // Envía el comando 'S' al servidor
-}
-
 let randomPoints1 = [];
 let randomPoints2 = [];
 let numFlashPoints = 5;
@@ -17,10 +10,7 @@ let isTimeUp = false;
 let imgFlash;
 let imgNormal;
 let aim;
-let serial;
-
-let mouseXArduino = 0;
-let mouseYArduino = 0;
+const socket = io.connect('http://localhost:3000'); // Conecta con el servidor Socket.io
 
 function updateTimerDisplay() {
   const timerDisplay = document.getElementById("timerDisplay");
@@ -56,11 +46,6 @@ function setup() {
   }
 
   timerInterval = setInterval(decrementTimer, 1000);
-
-  // Comunicación con serie
-  serial=new p5.SerialPort();
-  serial.open('COM6');
-  serial.on('data',processData)
 }
 
 function draw() {
@@ -71,8 +56,8 @@ function draw() {
     clearInterval(timerInterval);
     textSize(32);
     fill(0);
-    text("¡Time's up!" , width / 2.8, height / 2.2);
-    text("Final Score: "+ score,  width / 3, height / 1.8)
+    text("¡Time's up!", width / 2.8, height / 2.2);
+    text("Final Score: " + score, width / 3, height / 1.8);
     return;
   }
 
@@ -96,24 +81,33 @@ function draw() {
 
   for (let i = 0; i < numFlashPoints; i++) {
     image(imgFlash, randomPoints1[i].position.x, randomPoints1[i].position.y, 60, 60);
-    if (dist(mouseXArduino, mouseYArduino, randomPoints1[i].position.x + 30, randomPoints1[i].position.y + 30) < 30) {
-      score += 3;
-      randomPoints1[i].position.x = -60;
-      randomPoints1[i].position.y = random(0, height);
+    if (mouseIsPressed) {
+      const d = dist(mouseX, mouseY, randomPoints1[i].position.x + 30, randomPoints1[i].position.y + 30);
+      if (d < 30) {
+        score += 3;
+        randomPoints1[i].position.x = -60;
+        randomPoints1[i].position.y = random(0, height);
+        // Notifica al servidor que un pato flash fue golpeado
+        socket.emit('flashDuckHit', i);
       }
     }
-
+  }
 
   for (let i = 0; i < numNormalPoints; i++) {
     image(imgNormal, randomPoints2[i].position.x, randomPoints2[i].position.y, 60, 60);
-    if (dist(mouseXArduino, mouseYArduino, randomPoints2[i].position.x + 30, randomPoints2[i].position.y + 30) < 30) {
-      score += 1;
-      randomPoints2[i].position.x = -60;
-      randomPoints2[i].position.y = random(0, height);
+    if (mouseIsPressed) {
+      const d = dist(mouseX, mouseY, randomPoints2[i].position.x + 30, randomPoints2[i].position.y + 30);
+      if (d < 30) {
+        score += 1;
+        randomPoints2[i].position.x = -60;
+        randomPoints2[i].position.y = random(0, height);
+        // Notifica al servidor que un pato normal fue golpeado
+        socket.emit('normalDuckHit', i);
       }
     }
+  }
 
-    image(aim, mouseXArduino - 15, mouseYArduino - 15, 30, 30);
+  image(aim, mouseX - 15, mouseY - 15, 30, 30);
 }
 
 function decrementTimer() {
@@ -122,25 +116,3 @@ function decrementTimer() {
     isTimeUp = true;
   }
 }
-
-function processData() {
-  let data = serial.readStringUntil('\n');
-  if (data) {
-    const values = data.split(',');
-    if (values.length === 3) {
-      const potValue1 = int(values[0].split('A1')[1]);
-      const potValue2 = int(values[1].split('A3')[1]);
-      const buttonState = int(values[2].split('3')[1]);
-
-      mouseXArduino = map(potValue1, 0, 1023, 0, width);
-      mouseYArduino = map(potValue2, 0, 1023, 0, height);
-
-      // Realiza acciones en base al estado del botón (disparar)
-      if (buttonState == 1) {
-
-      }
-    }
-  }
-}
-
-
