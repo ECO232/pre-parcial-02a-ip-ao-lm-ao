@@ -3,12 +3,13 @@ let randomPoints2 = [];
 let numFlashPoints = 5;
 let numNormalPoints = 10;
 let spacing;
-let timer = 30;
-let score = 0; // Agregamos una variable para llevar el puntaje
+let timer = 3;
+let score = 0;
 let timerInterval;
 let isTimeUp = false;
 let imgFlash;
 let imgNormal;
+let aim;
 
 function updateTimerDisplay() {
   const timerDisplay = document.getElementById("timerDisplay");
@@ -20,6 +21,7 @@ function updateTimerDisplay() {
 function preload() {
   imgFlash = loadImage('ducks/patoFlash.png');
   imgNormal = loadImage('ducks/patoNormal.png');
+  aim = loadImage('ducks/aim.png');
 }
 
 function setup() {
@@ -53,7 +55,8 @@ function draw() {
     clearInterval(timerInterval);
     textSize(32);
     fill(0);
-    text("¡Time's up! - Final Score: " + score, width / 2.8, height / 2);
+    text("¡Time's up!", width / 2.8, height / 2.2);
+    text("Final Score: " + score, width / 3, height / 1.8)
     return;
   }
   
@@ -95,6 +98,7 @@ function draw() {
     }
   }
 
+  image(aim, mouseX - 15, mouseY - 15, 30, 30);
 }
 
 function decrementTimer() {
