@@ -1,3 +1,10 @@
+const socket = io();
+
+// Envía un comando de disparo al servidor
+function sendShootCommand() {
+  socket.emit('shoot', 'S'); // Envía el comando 'S' al servidor
+}
+
 let randomPoints1 = [];
 let randomPoints2 = [];
 let numFlashPoints = 5;
