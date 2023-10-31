@@ -92,6 +92,10 @@ function draw() {
       randomPoints2[i].position.y = random(0, height);
     }
   }
+  
+
+  image(aim, ardMouseX - 15, ardMouseY - 15, 30, 30);
+
 
   for (let i = 0; i < numFlashPoints; i++) {
     image(imgFlash, randomPoints1[i].position.x, randomPoints1[i].position.y, 60, 60);
@@ -116,9 +120,6 @@ function draw() {
       }
     }
   }
-
-  // Dibuja el puntero controlado por el Arduino
-  image(aim, ardMouseX - 15, ardMouseY - 15, 30, 30);
 }
 
 function decrementTimer() {
