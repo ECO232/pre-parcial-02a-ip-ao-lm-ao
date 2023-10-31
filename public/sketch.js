@@ -1,7 +1,7 @@
-let randomPoints1 = [];
-let randomPoints2 = [];
-let numFlashPoints = 5;
-let numNormalPoints = 10;
+const randomPoints1 = [];
+const randomPoints2 = [];
+const numFlashPoints = 5;
+const numNormalPoints = 10;
 let spacing;
 let timer = 30;
 let score = 0;
@@ -10,6 +10,9 @@ let isTimeUp = false;
 let imgFlash;
 let imgNormal;
 let aim;
+let ardMouseX = 0;
+let ardMouseY = 0;
+let socket;
 
 function updateTimerDisplay() {
   const timerDisplay = document.getElementById("timerDisplay");
@@ -45,6 +48,18 @@ function setup() {
   }
 
   timerInterval = setInterval(decrementTimer, 1000);
+
+  // Inicializa la conexión con el servidor de socket.io
+  socket = io();
+
+  // Escucha los datos del servidor
+  socket.on('mensaje', (element) => {
+    ardMouseX = element.x;
+    ardMouseY = element.y;
+    if (element.f === 1) {
+      mousePressed();
+    }
+  });
 }
 
 function draw() {
@@ -102,7 +117,8 @@ function draw() {
     }
   }
 
-  image(aim, mouseX - 15, mouseY - 15, 30, 30);
+  // Dibuja el puntero controlado por el Arduino
+  image(aim, ardMouseX - 15, ardMouseY - 15, 30, 30);
 }
 
 function decrementTimer() {
@@ -111,3 +127,26 @@ function decrementTimer() {
     isTimeUp = true;
   }
 }
+
+
+  function mousePressed() {
+    // Verifica si se hizo clic en un objetivo
+    for (let i = 0; i < numFlashPoints; i++) {
+      const d = dist(mouseX, mouseY, randomPoints1[i].position.x + 30, randomPoints1[i].position.y + 30);
+      if (d < 30) {
+        score += 3;
+        randomPoints1[i].position.x = -60;
+        randomPoints1[i].position.y = random(0, height);
+      }
+    }
+
+    for (let i = 0; i < numNormalPoints; i++) {
+      const d = dist(mouseX, mouseY, randomPoints2[i].position.x + 30, randomPoints2[i].position.y + 30);
+      if (d < 30) {
+        score += 1;
+        randomPoints2[i].position.x = -60;
+        randomPoints2[i].position.y = random(0, height);
+      }
+    }
+  }
+
