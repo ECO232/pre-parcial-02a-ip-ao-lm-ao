@@ -20,23 +20,28 @@ const port = new SerialPort({
 const parser = port.pipe(new ReadlineParser());
 
 // Comunicación con el Arduino
-let ardMouseX = 0;
-let ardMouseY = 0;
-
+let counter = 0;
+let arduinoInput = [];
 parser.on('data', (data) => {
-    // Parsea los datos del Arduino y actualiza las coordenadas del puntero
-    const parts = data.split(':');
-    const label = parts[0];
-    const value = parseFloat(parts[1]);
-    if (label === 'X') {
-        ardMouseX = value;
-    } else if (label === 'Y') {
-        ardMouseY = value;
-    } else if (label === 'F' && value === 1) {
-        // El Arduino envía un evento de clic
-        io.emit('click', { x: ardMouseX, y: ardMouseY });
+    console.log(data);
+    let input = data.split(":");
+    console.log(input[1]);
+    if (input[0] == "X") {
+        arduinoInput[0] = input[1];
+        counter++;
+    }else if (input[0] == "Y") {
+        arduinoInput[1] = input[1];
+        counter++;
+    }else if (input[0] == "F") {
+        arduinoInput[2] = input[1]
+        counter++
+    }else{
+        console.log("This doesn't work", input[0]);
     }
-    console.log('Datos recibidos', data)
+    if (counter == 3) {
+        counter = 0;
+        io.emit("mensaje", {"x":arduinoInput[0], "y":arduinoInput[1], "f":arduinoInput[2]})
+    }
 });
 
 // Configuración del juego
