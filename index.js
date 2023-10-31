@@ -33,6 +33,7 @@ parser.on('data', (data) => {
         // El Arduino envía un evento de clic
         io.emit('click', { x: ardMouseX, y: ardMouseY });
     }
+    console.log('Datos recibidos', data)
 });
 
 // Configuración del juego
