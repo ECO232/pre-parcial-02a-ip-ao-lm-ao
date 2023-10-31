@@ -12,7 +12,8 @@ const io = new Server(server);
 app.use(express.static('public')); // Sirve archivos estáticos desde la carpeta 'public'
 
 // Configuración del puerto serie
-const port = new SerialPort('COM10', { baudRate: 9600 });
+const portPath = 'COM6'; // Cambia 'COM3' por la ruta correcta de tu puerto serie
+const port = new SerialPort(portPath, { baudRate: 9600 });
 const parser = port.pipe(new ReadlineParser());
 
 // Comunicación con el Arduino
