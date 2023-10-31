@@ -1,3 +1,5 @@
+const socket = io();
+
 const randomPoints1 = [];
 const randomPoints2 = [];
 const numFlashPoints = 5;
@@ -7,12 +9,8 @@ let timer = 30;
 let score = 0;
 let timerInterval;
 let isTimeUp = false;
-let imgFlash;
-let imgNormal;
-let aim;
 let ardMouseX = 0;
 let ardMouseY = 0;
-let socket;
 
 function updateTimerDisplay() {
   const timerDisplay = document.getElementById("timerDisplay");
@@ -21,10 +19,13 @@ function updateTimerDisplay() {
   timerDisplay.innerText = `Timer: ${minutes}:${seconds < 10 ? '0' : ''}${seconds} seconds - Score: ${score}`;
 }
 
+let imgFlash;
+let imgNormal;
+let aim;
 function preload() {
-  imgFlash = loadImage('../ducks/patoFlash.png');
-  imgNormal = loadImage('../ducks/patoNormal.png');
-  aim = loadImage('../ducks/aim.png');
+  imgFlash = loadImage('./ducks/patoFlash.png');
+  imgNormal = loadImage('./ducks/patoNormal.png');
+  aim = loadImage('./ducks/aim.png');
 }
 
 function setup() {
@@ -48,19 +49,17 @@ function setup() {
   }
 
   timerInterval = setInterval(decrementTimer, 1000);
-
-  // Inicializa la conexión con el servidor de socket.io
-  socket = io();
-
-  // Escucha los datos del servidor
-  socket.on('mensaje', (element) => {
-    ardMouseX = element.x;
-    ardMouseY = element.y;
-    if (element.f === 1) {
-      mousePressed();
-    }
-  });
 }
+
+// Escucha los datos del servidor
+socket.on('mensaje', (element) => {
+  //console.log("ardInput", element)
+  ardMouseX = parseInt(element.x);
+  ardMouseY = parseInt(element.y);
+  if (parseInt(element.f) == 1) {
+    mousePressed();
+  }
+});
 
 function draw() {
   background(220);
@@ -77,6 +76,7 @@ function draw() {
 
   updateTimerDisplay();
 
+
   for (let i = 0; i < numFlashPoints; i++) {
     randomPoints1[i].position.x += 13;
     if (randomPoints1[i].position.x > width) {
@@ -92,7 +92,7 @@ function draw() {
       randomPoints2[i].position.y = random(0, height);
     }
   }
-  
+
 
   image(aim, ardMouseX - 15, ardMouseY - 15, 30, 30);
 
@@ -130,24 +130,25 @@ function decrementTimer() {
 }
 
 
-  function mousePressed() {
-    // Verifica si se hizo clic en un objetivo
-    for (let i = 0; i < numFlashPoints; i++) {
-      const d = dist(mouseX, mouseY, randomPoints1[i].position.x + 30, randomPoints1[i].position.y + 30);
-      if (d < 30) {
-        score += 3;
-        randomPoints1[i].position.x = -60;
-        randomPoints1[i].position.y = random(0, height);
-      }
-    }
-
-    for (let i = 0; i < numNormalPoints; i++) {
-      const d = dist(mouseX, mouseY, randomPoints2[i].position.x + 30, randomPoints2[i].position.y + 30);
-      if (d < 30) {
-        score += 1;
-        randomPoints2[i].position.x = -60;
-        randomPoints2[i].position.y = random(0, height);
-      }
+function mousePressed() {
+  // Verifica si se hizo clic en un objetivo
+  for (let i = 0; i < numFlashPoints; i++) {
+    const d = dist(ardMouseX, ardMouseY, randomPoints1[i].position.x + 30, randomPoints1[i].position.y + 30);
+    if (d < 30) {
+      score += 3;
+      randomPoints1[i].position.x = -60;
+      randomPoints1[i].position.y = random(0, height);
     }
   }
+
+  for (let i = 0; i < numNormalPoints; i++) {
+    const d = dist(ardMouseX, ardMouseY, randomPoints2[i].position.x + 30, randomPoints2[i].position.y + 30);
+    if (d < 30) {
+      score += 1;
+      randomPoints2[i].position.x = -60;
+      randomPoints2[i].position.y = random(0, height);
+    }
+  }
+}
+
 

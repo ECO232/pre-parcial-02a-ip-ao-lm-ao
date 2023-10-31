@@ -12,12 +12,16 @@ const io = new Server(server);
 app.use(express.static('public')); // Sirve archivos estáticos desde la carpeta 'public'
 
 // Configuración del puerto serie
-const portPath = 'COM6'; // Cambia 'COM3' por la ruta correcta de tu puerto serie
+// Cambia 'COM3' por la ruta correcta de tu puerto serie
 const port = new SerialPort({
-    path: portPath,
+    path: 'COM3',
     baudRate: 9600
 });
 const parser = port.pipe(new ReadlineParser());
+
+port.on('error', function (err) {
+    console.log('Error: ', err.message);
+})
 
 // Comunicación con el Arduino
 let counter = 0;
@@ -25,7 +29,7 @@ let arduinoInput = [];
 parser.on('data', (data) => {
     console.log(data);
     let input = data.split(":");
-    console.log(input[1]);
+    //console.log(input[1]);
     if (input[0] == "X") {
         arduinoInput[0] = input[1];
         counter++;
@@ -49,20 +53,22 @@ parser.on('data', (data) => {
 
 // Establece la comunicación con el cliente
 io.on('connection', (socket) => {
+    console.log('Usuario conectado');
     // Escucha eventos del cliente, si es necesario
     // Ejemplo: socket.on('eventoDelCliente', (data) => { /* manejar evento */ });
 
     // Cuando el juego envía un clic del mouse, reenviarlo al Arduino
-    socket.on('click', (data) => {
+    /*socket.on('click', (data) => {
         port.write(`C:${data.x},${data.y}\n`, (err) => {
             if (err) {
                 console.error('Error al enviar datos al Arduino:', err.message);
             }
         });
-    });
+    });*/
 
     socket.on('disconnect', () => {
         // Manejar la desconexión del cliente
+        console.log('Usuario desconectado');
     });
 });
 
